@@ -1,5 +1,6 @@
 ## MongoDB - Criar índice e avaliar com Explain("executionStats")
 
+
 Tenho trabalhado com melhoria de performance no mongodb e para me organizar achei interessante documentar esses trabalho que tenho tido com índices, acompanhamento de queries e também parâmetros de configuração.
 
 Neste primeiro documento quero exemplificar o processo de criação de um índice do tipo *single field* no mongodb e identificar se o índice é funcional para a query.
@@ -9,6 +10,22 @@ Atualmente [o MongoDB trabalha com mais de um tipo de índice](https://docs.mong
 Portanto é importante conhecer a estrutura do seu documento e da sua query para entender qual o melhor tipo de índice a ser aplicado.
 
 Na minha collection ***mycollection*** tenho **1500000** de documentos, contém apenas o campo _id do documento (default) e apenas um campo **“x”** que existe em todos os documentos
+
+```
+> db.mycollection.count()
+1500000
+
+> db.mycollection.find()
+{ "_id" : ObjectId("60822de25600d9024ad6eb40"), "x" : 1 }
+{ "_id" : ObjectId("60822de25600d9024ad6eb41"), "x" : 2 }
+{ "_id" : ObjectId("60822de25600d9024ad6eb42"), "x" : 3 }
+{ "_id" : ObjectId("60822de25600d9024ad6eb43"), "x" : 4 }
+{ "_id" : ObjectId("60822de25600d9024ad6eb44"), "x" : 5 }
+
+
+> db.mycollection.count({"x":{$exists:true}})
+1500000
+``` 
 
 Também por default as collections com documentos possuem o índice do _id do tipo *unique* para que não exista o mesmo numero de ObjectId na collection.
 
@@ -28,11 +45,12 @@ Os pontos mais importantes para observar nesse retorno são:
 
  
 
-***queryPlanner.winningPlan*** detalha o plano selecionado pelo otimizador de consulta exibindo o estágio. Se o plano utilizado pela query estiver usando um índice, irá aparecer aqui, o que não é o caso do exemplo abaixo.
+`queryPlanner.winningPlan` detalha o plano selecionado pelo otimizador de consulta exibindo o estágio. Se o plano utilizado pela query estiver usando um índice, irá aparecer aqui.
+O que não é o caso do exemplo abaixo onde vemos `COLLSCAN`, ou seja, nenhum index está sendo utilizado.
 
-***executeStats.executionTimeMillis*** é o tempo geral de execução da query. Este tempo não é apenas o tempo em que a consulta é executada, também inclui o tempo que leva para gerar / selecionar o plano de execução.
+`executeStats.executionTimeMillis` é o tempo geral de execução da query. Este tempo não é apenas o tempo em que a consulta é executada, também inclui o tempo que leva para gerar / selecionar o plano de execução.
 
-***executeStats.totalDocsExamined*** é a quantidade de documentos que foi percorrida durante a execução da query.
+`executeStats.totalDocsExamined` é a quantidade de documentos que foi percorrida durante a execução da query.
 
 ```
 > db.mycollection.find({"x":32})
@@ -118,9 +136,9 @@ Para melhorar a performance da minha query no ambiente vou criar o índice usand
         }
 ]
 ```
-Podemos observar no retorno abaixo que o ***queryPlanner.winningPlan*** agora possui mais detalhes, no caso  ***queryPlanner.winningPlan.inputStage.indexName***, que é o nome do índice que criei no passo anterior.
+Podemos observar no retorno abaixo que o `queryPlanner.winningPlan` agora possui mais detalhes, no caso  `queryPlanner.winningPlan.inputStage.indexName`, que é o nome do índice que criei no passo anterior.
 
-O tempo de execução da query (***executeStats.executionTimeMillis)*** que era na média de 600 milissegundos diminuiu para 0 e a quantidade de documentos que ele percorreu (***executeStats.totalDocsExamined*** ) que era 1500000 reduziu para 1.
+O tempo de execução da query (`executeStats.executionTimeMillis`) que era na média de 600 milissegundos diminuiu para 0 e a quantidade de documentos que ele percorreu (`executeStats.totalDocsExamined`) que era 1500000 reduziu para 1.
 
 ```
 > db.mycollection.find({"x":32})
@@ -221,8 +239,6 @@ O tempo de execução da query (***executeStats.executionTimeMillis)*** que era 
         "ok" : 1
 }
 
-
 ```
-Podemos observar no retorno abaixo que o ***queryPlanner.winningPlan*** agora possui mais detalhes, no caso  ***queryPlanner.winningPlan.inputStage.indexName***, que é o nome do índice que criei no passo anterior.
 
-O tempo de execução da query (***executeStats.executionTimeMillis)*** que era na média de 600 milissegundos diminuiu para 0 e a quantidade de documentos que ele percorreu (***executeStats.totalDocsExamined*** ) que era 1500000 reduziu para 1.
+Acho importante frisar que este exemplo foi feito apenas localmente, portanto o tempo de execução para uma aplicação pode estar diferente.
