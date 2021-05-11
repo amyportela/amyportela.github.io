@@ -41,12 +41,12 @@ Ao executar a pesquisa por um único registro, a média de duração da minha qu
 
 Antes de obsevar o retorno, aqui são os pontos que acho importante acompanhar para este exemplo:  
 
-`queryPlanner.winningPlan` detalha o plano selecionado pelo otimizador de consulta exibindo o estágio. Se o plano utilizado pela query estiver usando um índice, irá aparecer aqui.
+* `queryPlanner.winningPlan` detalha o plano selecionado pelo otimizador de consulta exibindo o estágio. Se o plano utilizado pela query estiver usando um índice, irá aparecer aqui.
 O que não é o caso do exemplo abaixo onde vemos `COLLSCAN`, ou seja, nenhum ídice está sendo utilizado.
 
-`executeStats.executionTimeMillis` é o tempo geral de execução da query. Este tempo não é apenas o tempo em que a consulta é executada, também inclui o tempo que leva para gerar / selecionar o plano de execução.
+* `executeStats.executionTimeMillis` é o tempo geral de execução da query. Este tempo não é apenas o tempo em que a consulta é executada, também inclui o tempo que leva para gerar / selecionar o plano de execução.
 
-`executeStats.totalDocsExamined` é a quantidade de documentos que foi percorrida durante a execução da query.
+* `executeStats.totalDocsExamined` é a quantidade de documentos que foi percorrida durante a execução da query.
 
 ```
 > db.mycollection.find({"x":32})
