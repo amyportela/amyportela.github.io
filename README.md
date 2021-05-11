@@ -221,6 +221,7 @@ O tempo de execução da query (***executeStats.executionTimeMillis)*** que era 
         "ok" : 1
 }
 
+
 ```
 Podemos observar no retorno abaixo que o ***queryPlanner.winningPlan*** agora possui mais detalhes, no caso  ***queryPlanner.winningPlan.inputStage.indexName***, que é o nome do índice que criei no passo anterior.
 
