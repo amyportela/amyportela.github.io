@@ -9,7 +9,7 @@ Resumidamente um índice é uma estrutura que, através de ponteiros, é associa
 Atualmente [o MongoDB trabalha com mais de um tipo de índice](https://docs.mongodb.com/manual/indexes/).
 Portanto é importante conhecer a estrutura do seu documento e da sua query para entender qual o melhor tipo de índice a ser aplicado.
 
-Na minha collection ***mycollection*** tenho **1500000** de documentos, contém apenas o campo _id do documento (default) e apenas um campo **“x”** que existe em todos os documentos
+Iniciando com um exemplo na minha collection ***mycollection*** tenho **1.500.000** de documentos, contém apenas o campo _id do documento (default) e apenas um campo **“x”** que existe em todos os documentos
 
 ```
 > db.mycollection.count()
@@ -37,16 +37,12 @@ Também por default as collections com documentos possuem o índice do _id do ti
 
 ```
 
-Ao executar a pesquisa por um único registro, a média de duração da minha query é de 600 milissegundos e todos os documentos da collection (1500000) foram percorridos.
+Ao executar a pesquisa por um único registro, a média de duração da minha query é de 600 milissegundos e todos os documentos da collection (1.500.000) foram percorridos.
 
-Para ver mais detalhes da query no ambiente usei ***explain("executionStats").** Existe mais opções de verbosity para o explain(), pode ser visto [aqui](https://docs.mongodb.com/manual/reference/command/explain/).*
-
-Os pontos mais importantes para observar nesse retorno são: 
-
- 
+Antes de obsevar o retorno, aqui são os pontos que acho importante acompanhar para este exemplo:  
 
 `queryPlanner.winningPlan` detalha o plano selecionado pelo otimizador de consulta exibindo o estágio. Se o plano utilizado pela query estiver usando um índice, irá aparecer aqui.
-O que não é o caso do exemplo abaixo onde vemos `COLLSCAN`, ou seja, nenhum index está sendo utilizado.
+O que não é o caso do exemplo abaixo onde vemos `COLLSCAN`, ou seja, nenhum ídice está sendo utilizado.
 
 `executeStats.executionTimeMillis` é o tempo geral de execução da query. Este tempo não é apenas o tempo em que a consulta é executada, também inclui o tempo que leva para gerar / selecionar o plano de execução.
 
@@ -106,6 +102,8 @@ O que não é o caso do exemplo abaixo onde vemos `COLLSCAN`, ou seja, nenhum in
         "ok" : 1
 }
 ```
+###### *Para ver mais detalhes da query no ambiente usei*  `explain("executionStats")`. *Existe mais opções de verbosity para o explain(), pode ser visto [aqui](https://docs.mongodb.com/manual/reference/command/explain/).*
+
 Em outras situações de avaliação de performance, pode ser importante entender melhor outros pontos desse output, mais detalhes de cada campo pode ser visto [aqui](https://docs.mongodb.com/manual/reference/explain-results/)
 
 Para melhorar a performance da minha query no ambiente vou criar o índice usando a key que uso para consulta, no caso o campo ***"x"***
@@ -138,7 +136,7 @@ Para melhorar a performance da minha query no ambiente vou criar o índice usand
 ```
 Podemos observar no retorno abaixo que o `queryPlanner.winningPlan` agora possui mais detalhes, no caso  `queryPlanner.winningPlan.inputStage.indexName`, que é o nome do índice que criei no passo anterior.
 
-O tempo de execução da query (`executeStats.executionTimeMillis`) que era na média de 600 milissegundos diminuiu para 0 e a quantidade de documentos que ele percorreu (`executeStats.totalDocsExamined`) que era 1500000 reduziu para 1.
+O tempo de execução da query (`executeStats.executionTimeMillis`) que era na média de 600 milissegundos diminuiu para 0 e a quantidade de documentos que ele percorreu (`executeStats.totalDocsExamined`) que era 1.500.000 reduziu para 1.
 
 ```
 > db.mycollection.find({"x":32})
