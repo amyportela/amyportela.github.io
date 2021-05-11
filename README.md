@@ -12,7 +12,7 @@ Na minha collection ***mycollection*** tenho **1500000** de documentos, contém 
 
 Também por default as collections com documentos possuem o índice do _id do tipo *unique* para que não exista o mesmo numero de ObjectId na collection.
 
-```markdown
+```json
 
 
 > db.mycollection.getIndexes()
@@ -33,7 +33,8 @@ Os pontos mais importantes para observar nesse retorno são:
 ***executeStats.executionTimeMillis*** é o tempo geral de execução da query. Este tempo não é apenas o tempo em que a consulta é executada, também inclui o tempo que leva para gerar / selecionar o plano de execução.
 
 ***executeStats.totalDocsExamined*** é a quantidade de documentos que foi percorrida durante a execução da query.
-```
+
+```json
 > db.mycollection.find({"x":32})
 { "_id" : ObjectId("60822de25600d9024ad6eb5f"), "x" : 32 }
 >
@@ -90,7 +91,8 @@ Os pontos mais importantes para observar nesse retorno são:
 Em outras situações de avaliação de performance, pode ser importante entender melhor outros pontos desse output, mais detalhes de cada campo pode ser visto [aqui](https://docs.mongodb.com/manual/reference/explain-results/)
 
 Para melhorar a performance da minha query no ambiente vou criar o índice usando a key que uso para consulta, no caso o campo ***"x"***
-```
+
+```json
 > db.mycollection.createIndex({"x":1})
 {
         "createdCollectionAutomatically" : false,
@@ -120,7 +122,7 @@ Podemos observar no retorno abaixo que o ***queryPlanner.winningPlan*** agora po
 
 O tempo de execução da query (***executeStats.executionTimeMillis)*** que era na média de 600 milissegundos diminuiu para 0 e a quantidade de documentos que ele percorreu (***executeStats.totalDocsExamined*** ) que era 1500000 reduziu para 1.
 
-```
+```json
 > db.mycollection.find({"x":32})
 { "_id" : ObjectId("60822de25600d9024ad6eb5f"), "x" : 32 }
 
