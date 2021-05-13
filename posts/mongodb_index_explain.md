@@ -1,5 +1,8 @@
 ## MongoDB - Criar índice e avaliar com Explain("executionStats")
 
+<center>
+<img src="../assets/hand.png" alt="drawing" width="30%" heigth="30%"/>
+</center>
 
 Tenho trabalhado com melhoria de performance no mongodb e para me organizar achei interessante documentar esses trabalho que tenho tido com índices, acompanhamento de queries e também parâmetros de configuração.
 
