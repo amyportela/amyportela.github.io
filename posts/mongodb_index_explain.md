@@ -2,6 +2,7 @@
 
 <center>
 <img src="../assets/hand.png" alt="drawing" width="30%" heigth="30%"/>
+<meta property="og:image" content="https://amyportela.github.io/assets/hand.png">
 </center>
 
 Tenho trabalhado com melhoria de performance no mongodb e para me organizar achei interessante documentar esses trabalho que tenho tido com índices, acompanhamento de queries e também parâmetros de configuração.
